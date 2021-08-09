@@ -1,0 +1,28 @@
+{
+  "name": "lambda-github-actions",
+  "version": "1.0.0",
+  "description": "Lambda CI with github actions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diegofcornejo/lambda-github-actions.git"
+  },
+  "keywords": [
+    "lambda",
+    "ci",
+    "git",
+    "github",
+    "actions",
+    "workflow",
+    "serverless"
+  ],
+  "author": "Diego Cornejo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/diegofcornejo/lambda-github-actions/issues"
+  },
+  "homepage": "https://github.com/diegofcornejo/lambda-github-actions#readme"
+}
