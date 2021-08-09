@@ -1,0 +1,6 @@
+{
+    "FunctionName": "lambda-github-actions",
+    "Description": "Lambda CI with github actions",
+    "Timeout": 3,
+    "MemorySize": 128
+}
