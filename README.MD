@@ -24,7 +24,8 @@
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
+![License](https://img.shields.io/github/license/diegofcornejo/lambda-github-actions?style=for-the-badge)
+![Build](https://img.shields.io/github/workflow/status/diegofcornejo/lambda-github-actions/Deploy/master?style=for-the-badge)
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
 
