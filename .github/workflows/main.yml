@@ -1,0 +1,102 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  deploy_lambda:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+          mask-aws-account-id: 'no'
+      - name: Verify Changed code
+        uses: tj-actions/changed-files@v9.3
+        id: verify-changed-code
+      - name: Deploy to AWS
+        id: deploy-to-aws
+        if: contains(steps.verify-changed-code.outputs.modified_files, 'index.js')
+        run: |
+          zip -j deploy.zip index.js
+          aws lambda update-function-code --function-name `echo $(jq -r '.FunctionName' lambda.config.json)` --zip-file=fileb://deploy.zip 2> deploy.err || true
+          echo "::set-output name=error::$(grep -ohw 'deploy.err' -e 'Function not found')"
+    outputs:
+      aws-err: ${{steps.deploy-to-aws.outputs.error}}
+  create_lambda:
+    runs-on: ubuntu-latest
+    needs: deploy_lambda
+    if: ${{always() && needs.deploy_lambda.outputs.aws-err == 'Function not found'}}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+          mask-aws-account-id: 'no'
+      - name: Get aws error from deploy job
+        env:
+          DEPLOY_OUTPUT: ${{needs.deploy_lambda.outputs.aws-err}}
+        run: |
+          echo "$DEPLOY_OUTPUT"
+      - name: Get account info
+        run: |
+          echo "ACCOUNT_ID=`echo $(aws sts get-caller-identity | jq -r '.Account')`" >> $GITHUB_ENV
+      - name: Set role name
+        run: echo "ROLE_NAME=`echo $(jq -r '.Role' lambda.config.json)`" >> $GITHUB_ENV
+      - name: Check if role exists
+        id: check-role
+        run: |
+          aws iam get-role --role-name $ROLE_NAME 2> check.err || true
+          echo $(grep -ohw 'check.err' -e 'cannot be found')
+          echo "::set-output name=error::$(grep -ohw 'check.err' -e 'cannot be found')"
+      - name: Create role
+        id: create-role
+        if: ${{steps.check-role.outputs.error == 'cannot be found'}}
+        run: |
+          aws iam create-role --role-name $ROLE_NAME --assume-role-policy-document '{"Version": "2012-10-17","Statement": [{ "Effect": "Allow", "Principal": {"Service": "lambda.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'
+          aws iam attach-role-policy --role-name $ROLE_NAME --policy-arn "arn:aws:iam::aws:policy/AWSLambda_FullAccess"
+      - name: Generate lambda config file
+        run: |
+          jq -r --arg ROLE_ARN "arn:aws:iam::$ACCOUNT_ID:role/$ROLE_NAME" '.Role = $ROLE_ARN' lambda.config.json > lambda.json
+      - name: Create lambda function
+        run: |
+          echo "Create function"
+          zip -j deploy.zip index.js
+          aws lambda create-function --cli-input-json file://lambda.json --zip-file=fileb://deploy.zip
+  update_lambda:
+    runs-on: ubuntu-latest
+    needs: deploy_lambda
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Get account info
+        run: |
+          echo "ACCOUNT_ID=`echo $(aws sts get-caller-identity | jq -r '.Account')`" >> $GITHUB_ENV
+      - name: Set role name
+        run: echo "ROLE_NAME=`echo $(jq -r '.Role' lambda.config.json)`" >> $GITHUB_ENV
+      - name: Verify Changed config
+        uses: tj-actions/changed-files@v9.3
+        id: verify-changed-config
+      - name: Update lambda configuration
+        if: contains(steps.verify-changed-config.outputs.modified_files, 'lambda.config.json')
+        run: |
+          jq -r --arg ROLE_ARN "arn:aws:iam::$ACCOUNT_ID:role/$ROLE_NAME" '.Role = $ROLE_ARN' lambda.config.json > lambda.json
+          aws lambda update-function-configuration --cli-input-json file://lambda.json

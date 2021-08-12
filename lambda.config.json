@@ -1,7 +1,7 @@
 {
     "FunctionName": "lambda-github-actions",
     "Description": "Lambda CI with github actions",
-    "Role":"arn:aws:iam::xxxxxxxxxxxx:role/LambdaAccessRole",
+    "Role":"GithubActionsRole",
     "Handler":"index.handler",
     "Runtime":"nodejs14.x",
     "Timeout": 3,
