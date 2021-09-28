@@ -24,7 +24,8 @@
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
-<!-- [![MIT License][license-shield]][license-url] -->
+![License](https://img.shields.io/github/license/diegofcornejo/lambda-github-actions?style=for-the-badge)
+![Build](https://img.shields.io/github/workflow/status/diegofcornejo/lambda-github-actions/Deploy/master?style=for-the-badge)
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
 
@@ -84,6 +85,29 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
+Tiempo atrás desarrollé una serie de micro servicios comunes que nuestro equipo usaba constantemente, el motivo de desarrollarlos fue unificar y acelerar el desarrollo de ciertas funcionalidades, ya que en cada proyecto, cada equipo y cada desarrollador implementaban de diferente forma estos servicios, por ejemplo:
+
+- Authentication & Authorization with local db, cognito, auth0, etc
+- Password reset
+- Send email with AWS SES or other vendors
+- Create short links
+- Store email events
+- Send SMS  with AWS SNS or Regional Telcos
+- Generate PDF
+- Upload & Download files from AWS S3
+- DNS Validation
+- SSL Certs generation
+- And other stuff
+
+Pero eso no es un problema, si se resolvió un problema común de muchos equipos multiproyectos.
+
+Inicialmente no es un problema, pero sí, lo hay: Mantenimiento!, todo los servicios que escribí los hice directamente en AWS Lambda, nadie más del equipo sabía donde estaban, y cada vez que se necesitaba hacer un cambio o validar alguno de los servicios necesitaban de mi participación.
+
+Esto en ocaciones por mis actividades normales retrasaba ciertas tareas o finalmente el equipo optaba por crear sus propios servicios inutilizando el concepto de homologación que estaba tratando de implementar.
+
+Básicamente por esta razón decidimos descargar todos estos micro servicios en repositorios git independientes y otorgar accesos granulares a los miembros del equipo para que puedan seguir aportando sobre los servicios o crear nuevos, ya que la mayoría de los miembros del equipo no tienen acceso directo a AWS y para agilizar el deploy de las actualizaciones y nuevos servicios creé este pequeño tutorial de como hacer autodeploy de funciones lambda usando github actions.
+
+****NO HE TENIDO TIEMPO DE TERMINAR LA DOCU****
 
 <!-- [![Product Name Screen Shot][product-screenshot]](https://diegocornejo.com) -->
 
@@ -181,15 +205,15 @@ Project Link: [https://github.com/diegofcornejo/lambda-github-actions](https://g
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/diegofcornejo/repo.svg?style=for-the-badge
+[contributors-shield]: https://img.shields.io/github/contributors/diegofcornejo/lambda-github-actions.svg?style=for-the-badge
 [contributors-url]: https://github.com/diegofcornejo/lambda-github-actions/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/diegofcornejo/repo.svg?style=for-the-badge
+[forks-shield]: https://img.shields.io/github/forks/diegofcornejo/lambda-github-actions.svg?style=for-the-badge
 [forks-url]: https://github.com/diegofcornejo/lambda-github-actions/network/members
-[stars-shield]: https://img.shields.io/github/stars/diegofcornejo/repo.svg?style=for-the-badge
+[stars-shield]: https://img.shields.io/github/stars/diegofcornejo/lambda-github-actions.svg?style=for-the-badge
 [stars-url]: https://github.com/diegofcornejo/lambda-github-actions/stargazers
-[issues-shield]: https://img.shields.io/github/issues/diegofcornejo/repo.svg?style=for-the-badge
+[issues-shield]: https://img.shields.io/github/issues/diegofcornejo/lambda-github-actions.svg?style=for-the-badge
 [issues-url]: https://github.com/diegofcornejo/lambda-github-actions/issues
-[license-shield]: https://img.shields.io/github/license/diegofcornejo/repo.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/diegofcornejo/lambda-github-actions.svg?style=for-the-badge
 [license-url]: https://github.com/diegofcornejo/lambda-github-actions/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/diego-f-cornejo-4154126a

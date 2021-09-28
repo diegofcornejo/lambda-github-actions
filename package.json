@@ -4,7 +4,9 @@
   "description": "Lambda CI with github actions",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "invoke": "aws lambda invoke --function-name lambda-github-actions --payload fileb://./events/example.json response.json",
+    "invoke:local": "sam local invoke -e ./events/example.json LambdaGithubActions"
   },
   "repository": {
     "type": "git",
