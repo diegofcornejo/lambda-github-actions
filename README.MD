@@ -28,7 +28,7 @@
 ![Build](https://img.shields.io/github/workflow/status/diegofcornejo/lambda-github-actions/Deploy/master?style=for-the-badge)
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
-
+![Alt](https://repobeats.axiom.co/api/embed/cba41cff11950e90521f7f67990dba6cb3743f6b.svg "Repobeats analytics image")
 
 <!-- PROJECT LOGO -->
 <br />
