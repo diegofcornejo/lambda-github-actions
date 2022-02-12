@@ -19,14 +19,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
           mask-aws-account-id: 'no'
-      - name: Verify Changed code
-        uses: tj-actions/changed-files@v9.3
-        id: verify-changed-code
       - name: Deploy to AWS
         id: deploy-to-aws
-        if: contains(steps.verify-changed-code.outputs.modified_files, 'index.js')
         run: |
-          zip -j deploy.zip index.js
+          npm ci || npm i
+          npx @vercel/ncc build ./src/index.js
+          zip -j deploy.zip ./dist/*
           aws lambda update-function-code --function-name `echo $(jq -r '.FunctionName' lambda.config.json)` --zip-file=fileb://deploy.zip 2> deploy.err || true
           echo "::set-output name=error::$(grep -ohw 'deploy.err' -e 'Function not found')"
     outputs:
@@ -72,7 +70,9 @@ jobs:
       - name: Create lambda function
         run: |
           echo "Create function"
-          zip -j deploy.zip index.js
+          npm ci || npm i
+          npx @vercel/ncc build ./src/index.js
+          zip -j deploy.zip ./dist/*
           aws lambda create-function --cli-input-json file://lambda.json --zip-file=fileb://deploy.zip
   update_lambda:
     runs-on: ubuntu-latest
