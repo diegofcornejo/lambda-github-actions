@@ -9,4 +9,4 @@ Resources:
     Properties:
       CodeUri: ./src # format is projectPath/
       Handler: index.handler # format is filename.functionName
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
