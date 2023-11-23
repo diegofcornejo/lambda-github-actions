@@ -25,7 +25,7 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 ![License](https://img.shields.io/github/license/diegofcornejo/lambda-github-actions?style=for-the-badge)
-![Build](https://img.shields.io/github/workflow/status/diegofcornejo/lambda-github-actions/Deploy/master?style=for-the-badge)
+![Build](https://img.shields.io/github/actions/workflow/status/diegofcornejo/lambda-github-actions/main.yml?branch=master&style=for-the-badge)
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
 <!-- ![Alt](https://repobeats.axiom.co/api/embed/cba41cff11950e90521f7f67990dba6cb3743f6b.svg "Repobeats analytics image") -->
@@ -60,12 +60,6 @@
   <summary><h2 style="display: inline-block">Table of Contents</h2></summary>
   <ol>
     <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
@@ -81,58 +75,27 @@
   </ol>
 </details>
 
-
-
-<!-- ABOUT THE PROJECT -->
-## About The Project
-Tiempo atrás desarrollé una serie de micro servicios comunes que nuestro equipo usaba constantemente, el motivo de desarrollarlos fue unificar y acelerar el desarrollo de ciertas funcionalidades, ya que en cada proyecto, cada equipo y cada desarrollador implementaban de diferente forma estos servicios, por ejemplo:
-
-- Authentication & Authorization with local db, cognito, auth0, etc
-- Password reset
-- Send email with AWS SES or other vendors
-- Create short links
-- Store email events
-- Send SMS  with AWS SNS or Regional Telcos
-- Generate PDF
-- Upload & Download files from AWS S3
-- DNS Validation
-- SSL Certs generation
-- And other stuff
-
-Pero eso no es un problema, si se resolvió un problema común de muchos equipos multiproyectos.
-
-Inicialmente no es un problema, pero sí, lo hay: Mantenimiento!, todo los servicios que escribí los hice directamente en AWS Lambda, nadie más del equipo sabía donde estaban, y cada vez que se necesitaba hacer un cambio o validar alguno de los servicios necesitaban de mi participación.
-
-Esto en ocaciones por mis actividades normales retrasaba ciertas tareas o finalmente el equipo optaba por crear sus propios servicios inutilizando el concepto de homologación que estaba tratando de implementar.
-
-Básicamente por esta razón decidimos descargar todos estos micro servicios en repositorios git independientes y otorgar accesos granulares a los miembros del equipo para que puedan seguir aportando sobre los servicios o crear nuevos, ya que la mayoría de los miembros del equipo no tienen acceso directo a AWS y para agilizar el deploy de las actualizaciones y nuevos servicios creé este pequeño tutorial de como hacer autodeploy de funciones lambda usando github actions.
-
-****NO HE TENIDO TIEMPO DE TERMINAR LA DOCU****
-
-<!-- [![Product Name Screen Shot][product-screenshot]](https://diegocornejo.com) -->
-
-
-### Built With
-
-* []()
-* []()
-* []()
-
-
-
 <!-- GETTING STARTED -->
 ## Getting Started
 
-To get a local copy up and running follow these simple steps.
+Clone the repository or you can use the [template](https://github.com/new?template_name=lambda-github-actions&template_owner=diegofcornejo)
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
 * Create github secrets
-  ```sh
-  AWS_ACCESS_KEY_ID
-  AWS_SECRET_ACCESS_KEY
-  ```
+
+```sh
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+AWS_REGION
+```
+
+Note: Your credentials must have permissions to deploy lambda functions
+```yml
+lambda:CreateFunction
+lambda:UpdateFunctionCode
+lambda:UpdateFunctionConfiguration
+```
 
 ### Installation
 
@@ -149,18 +112,39 @@ This is an example of how to list things you need to use the software and how to
 
 <!-- USAGE EXAMPLES -->
 ## Usage
+Modify the `lambda.config.json` file with your lambda function configuration
+```json
+{
+    "FunctionName": "lambda-github-actions",
+    "Description": "Lambda CI with github actions",
+    "Role":"GithubActionsRole",
+    "Handler":"index.handler",
+    "Runtime":"nodejs20.x",
+    "Timeout": 3,
+    "MemorySize": 256
+}
+```
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+Modify the `index.mjs` file with your lambda function code
+```js
+exports.handler = async (event) => {
+    // TODO implement
+    const response = {
+        statusCode: 200,
+        body: JSON.stringify('AWS Lambda CI/CD with github actions'),
+    };
+    return response;
+};
+```
 
-_For more examples, please refer to the [Documentation](https://diegocornejo.com)_
+And finally push your changes to the repository, the github action will deploy your lambda function, you can see the logs in the actions tab.
 
-
+If you need you can modify the github action workflow file `.github/workflows/main.yml` with your own configuration.
 
 <!-- ROADMAP -->
 ## Roadmap
 
 See the [open issues](https://github.com/diegofcornejo/lambda-github-actions/issues) for a list of proposed features (and known issues).
-
 
 
 <!-- CONTRIBUTING -->
@@ -193,11 +177,11 @@ Project Link: [https://github.com/diegofcornejo/lambda-github-actions](https://g
 
 
 <!-- ACKNOWLEDGEMENTS -->
-## Acknowledgements
+<!-- ## Acknowledgements
 
 * []()
 * []()
-* []()
+* []() -->
 
 
 
@@ -216,5 +200,5 @@ Project Link: [https://github.com/diegofcornejo/lambda-github-actions](https://g
 [license-shield]: https://img.shields.io/github/license/diegofcornejo/lambda-github-actions.svg?style=for-the-badge
 [license-url]: https://github.com/diegofcornejo/lambda-github-actions/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/diego-f-cornejo-4154126a
+[linkedin-url]:https://www.linkedin.com/in/diego-cornejo-devops-sre/
 <!-- [product-screenshot]: images/screenshot.png -->

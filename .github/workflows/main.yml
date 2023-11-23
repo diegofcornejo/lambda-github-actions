@@ -9,11 +9,11 @@ jobs:
   deploy_lambda:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -23,7 +23,7 @@ jobs:
         id: deploy-to-aws
         run: |
           npm ci || npm i
-          npx @vercel/ncc build ./src/index.js
+          npx @vercel/ncc build ./src/index.mjs
           zip -j deploy.zip ./dist/*
           aws lambda update-function-code --function-name `echo $(jq -r '.FunctionName' lambda.config.json)` --zip-file=fileb://deploy.zip 2> deploy.err || true
           echo "::set-output name=error::$(grep -ohw 'deploy.err' -e 'Function not found')"
@@ -34,13 +34,13 @@ jobs:
     needs: deploy_lambda
     if: ${{always() && needs.deploy_lambda.outputs.aws-err == 'Function not found'}}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          aws-region: ${{ secrets.AWS_REGION }}
           mask-aws-account-id: 'no'
       - name: Get aws error from deploy job
         env:
@@ -71,18 +71,18 @@ jobs:
         run: |
           echo "Create function"
           npm ci || npm i
-          npx @vercel/ncc build ./src/index.js
+          npx @vercel/ncc build ./src/index.mjs
           zip -j deploy.zip ./dist/*
           aws lambda create-function --cli-input-json file://lambda.json --zip-file=fileb://deploy.zip
   update_lambda:
     runs-on: ubuntu-latest
     needs: deploy_lambda
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
