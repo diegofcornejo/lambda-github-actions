@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Lambda CI with github actions",
   "main": "index.js",
+	"type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "invoke": "aws lambda invoke --function-name lambda-github-actions --payload fileb://./events/example.json response.json",
