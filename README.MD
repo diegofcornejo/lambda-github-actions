@@ -127,7 +127,7 @@ Modify the `lambda.config.json` file with your lambda function configuration
 
 Modify the `index.mjs` file with your lambda function code
 ```js
-exports.handler = async (event) => {
+export const handler = async (event) => {
     // TODO implement
     const response = {
         statusCode: 200,
