@@ -90,11 +90,14 @@ AWS_SECRET_ACCESS_KEY
 AWS_REGION
 ```
 
-Note: Your credentials must have permissions to deploy lambda functions
+Note: Your credentials must have permissions to deploy lambda functions and create roles.(needed for the first deploy if you don't have a role)
 ```yml
 lambda:CreateFunction
 lambda:UpdateFunctionCode
 lambda:UpdateFunctionConfiguration
+iam:CreateRole
+iam:AttachRolePolicy
+iam:PassRole
 ```
 
 ### Installation
