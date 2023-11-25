@@ -200,11 +200,26 @@ Project Link: [https://github.com/diegofcornejo/lambda-github-actions](https://g
 
 
 <!-- ACKNOWLEDGEMENTS -->
-<!-- ## Acknowledgements
+## Acknowledgements
 
-* []()
-* []()
-* []() -->
+* Vercel ncc (@vercel/ncc)
+  - `@vercel/ncc` does not work correctly with preinstalled `aws-sdk` package, for example:
+	```js
+	import { STSClient } from "@aws-sdk/client-sts"
+	```
+	is treated as a CommonJS module, and try to load using `require`:
+	```js
+	module.exports = eval("require")("@aws-sdk/client-sts");
+	``` 
+
+	To avoid this issue, modify the `main.yml` and add any aws-sdk package with the `-e` flag to exclude it from the build. 
+	
+	For example, if you need to use `@aws-sdk/client-sts`, you can use the following command:
+    ```yml
+    npx @vercel/ncc build ./src/index.mjs -e @aws-sdk/client-sts
+    ```
+  - [Vercel ncc on npm](https://www.npmjs.com/package/@vercel/ncc): ESM + Relative imports without .js extension causes "ReferenceError: require is not defined in ES module scope" [#1123](https://github.com/vercel/ncc/issues/1123)
+
 
 
 

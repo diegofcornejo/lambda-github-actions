@@ -35,7 +35,7 @@ jobs:
         id: deploy-to-aws
         run: |
           npm ci || npm i
-          npx @vercel/ncc build ./src/index.mjs
+          npx @vercel/ncc build ./src/index.mjs -e @aws-sdk/client-sts
           zip -j deploy.zip ./dist/*
           aws lambda update-function-code --function-name `echo $(jq -r '.FunctionName' lambda.config.json)` --zip-file=fileb://deploy.zip 2> deploy.err || true
           echo "::set-output name=error::$(grep -ohw 'deploy.err' -e 'Function not found')"
@@ -93,7 +93,7 @@ jobs:
         run: |
           echo "Create function"
           npm ci || npm i
-          npx @vercel/ncc build ./src/index.mjs
+          npx @vercel/ncc build ./src/index.mjs -e @aws-sdk/client-sts
           zip -j deploy.zip ./dist/*
           aws lambda create-function --cli-input-json file://lambda.json --zip-file=fileb://deploy.zip
 
