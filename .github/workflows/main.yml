@@ -15,7 +15,7 @@ jobs:
 
       - name: Check for changed files
         id: src-files
-        uses: tj-actions/changed-files@v40
+        uses: tj-actions/changed-files@v40.1.1
         with:
           files: |
             src/**
