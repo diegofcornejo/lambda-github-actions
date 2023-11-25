@@ -13,6 +13,7 @@ export const handler = async (event) => {
 	const ditto = await pokeResponse.json();
 	console.log("🚀 ~ file: index.mjs:14 ~ handler ~ ditto:", ditto)
 
+	// Return all examples in response
 	const res = {
 		message: 'AWS Lambda CI/CD with Github Actions',
 		event,
@@ -22,7 +23,7 @@ export const handler = async (event) => {
 
 	const response = {
 		statusCode: 200,
-		body: JSON.stringify(res)
+		body: JSON.stringify(res) // body must be string
 	};
 	return response;
 };
