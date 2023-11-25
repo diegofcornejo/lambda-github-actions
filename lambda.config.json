@@ -4,6 +4,6 @@
     "Role":"GithubActionsRole",
     "Handler":"index.handler",
     "Runtime":"nodejs20.x",
-    "Timeout": 3,
-    "MemorySize": 128
+    "Timeout": 10,
+    "MemorySize": 256
 }
