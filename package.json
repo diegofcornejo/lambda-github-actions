@@ -5,9 +5,14 @@
   "main": "./src/index.mjs",
 	"type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "invoke": "aws lambda invoke --function-name lambda-github-actions --payload fileb://./events/example.json response.json",
-    "invoke:local": "sam local invoke -e ./events/example.json LambdaGithubActions"
+		"build" : "npx @vercel/ncc build ./src/index.mjs",
+		"build:min" : "npm run build -- -m",
+		"build:zip" : "npm run build:min && zip -j ./dist/deploy.zip ./dist/*",
+		"deploy" : "npm run build:zip && aws lambda update-function-code --function-name `echo $(jq -r '.FunctionName' lambda.config.json)` --zip-file=fileb://./dist/deploy.zip",
+    "invoke": "aws lambda invoke --function-name `echo $(jq -r '.FunctionName' lambda.config.json)` --payload fileb://./events/example.json response.json",
+    "invoke:local": "sam local invoke -e ./events/example.json LambdaGithubActions",
+		"get:info": "aws lambda get-function --function-name `echo $(jq -r '.FunctionName' lambda.config.json)`",
+		"get:url": "aws lambda get-function-url-config --function-name `echo $(jq -r '.FunctionName' lambda.config.json)`"
   },
   "repository": {
     "type": "git",

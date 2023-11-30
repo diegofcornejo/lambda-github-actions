@@ -67,6 +67,7 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
+		<li><a href="#scripts">Scripts</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -123,7 +124,7 @@ Modify the `lambda.config.json` file with your lambda function configuration
     "Role":"GithubActionsRole",
     "Handler":"index.handler",
     "Runtime":"nodejs20.x",
-    "Timeout": 3,
+    "Timeout": 10,
     "MemorySize": 256
 }
 ```
@@ -134,35 +135,65 @@ import { STSClient, GetCallerIdentityCommand } from "@aws-sdk/client-sts";
 
 export const handler = async (event) => {
 
-	// AWS SDK v3 example
-	const stsClient = new STSClient({ region: 'us-east-1' });
-	const stsCommand = new GetCallerIdentityCommand({});
-	const stsResponse = await stsClient.send(stsCommand);
-	console.log("🚀 ~ file: index.mjs:9 ~ handler ~ stsResponse:", stsResponse)
-
-	// NodeJS 20 native support for fetch API - POKEAPI example
-	const pokeResponse = await fetch('https://pokeapi.co/api/v2/pokemon/ditto');
-	const ditto = await pokeResponse.json();
-	console.log("🚀 ~ file: index.mjs:14 ~ handler ~ ditto:", ditto)
-
-	const res = {
-		message: 'AWS Lambda CI/CD with Github Actions',
-		event,
-		awsSdk: stsResponse,
-		pokeApi: ditto
+	const done = (statusCode, body) => {
+		return {
+			statusCode,
+			body: JSON.stringify(body) // body must be string
+		};
 	}
 
-	const response = {
-		statusCode: 200,
-		body: JSON.stringify(res)
-	};
-	return response;
+	try {
+		// AWS SDK v3 example
+		const stsClient = new STSClient({ region: 'us-east-1' });
+		const stsCommand = new GetCallerIdentityCommand({});
+		const stsResponse = await stsClient.send(stsCommand);
+		console.log("🚀 ~ file: index.mjs:9 ~ handler ~ stsResponse:", stsResponse)
+
+		// NodeJS 20 native support for fetch API - POKEAPI example
+		const pokeResponse = await fetch('https://pokeapi.co/api/v2/pokemon/ditto');
+		const ditto = await pokeResponse.json();
+		console.log("🚀 ~ file: index.mjs:14 ~ handler ~ ditto:", ditto)
+
+		// Return all examples in response
+		const res = {
+			message: 'AWS Lambda CI/CD with Github Actions',
+			event,
+			awsSdk: stsResponse,
+			pokeApi: ditto
+		}
+
+		return done(200, res)
+
+	} catch (error) {
+		console.error("🚀 ~ file: index.mjs:27 ~ handler ~ error", error)
+		return done(500, error)
+	}
+
 };
 ```
 
 And finally push your changes to the repository, the github action will deploy your lambda function, you can see the logs in the actions tab.
 
 If you need you can modify the github action workflow file `.github/workflows/main.yml` with your own configuration.
+
+<!-- SCRIPTS -->
+## Scripts
+### This assumes you have installed and configured the [aws-cli](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) and [sam-cli](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
+
+* `npm run build` - Build the lambda function using `@vercel/ncc` package
+* `npm run build:min` - Build the lambda function using `@vercel/ncc` package with minify option
+* `npm run build:zip` - Build the lambda function using `@vercel/ncc` package and create a zip file
+* `npm run deploy` - Deploy the lambda function using `aws-cli`, in case you need to deploy the lambda function manually without github actions
+* `npm run invoke` - Invoke the lambda function using `aws-cli`
+* `npm run invoke:local` - Invoke the lambda function using `sam-cli`
+* `npm run get:info` - Get the lambda function info using `aws-cli`
+* `npm run get:url` - Get the lambda function url using `aws-cli`
+
+If you need to execute any of these (aws) scripts with a differente aws profile, you can use the `AWS_PROFILE` environment variable, for example:
+```sh
+AWS_PROFILE=dev npm run deploy
+```
+
 
 <!-- ROADMAP -->
 ## Roadmap
