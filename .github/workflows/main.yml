@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy AWS Lambda
 
 on:
   push:
@@ -23,12 +23,7 @@ jobs:
 
       - name: Configure AWS Credentials
         if: steps.src-files.outputs.any_changed == 'true'
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-          mask-aws-account-id: 'no'
+        uses: ./.github/actions/configure-aws-credentials
 
       - name: Deploy to AWS
         if: steps.src-files.outputs.any_changed == 'true'
@@ -52,12 +47,7 @@ jobs:
           fetch-depth: 0
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-          mask-aws-account-id: 'no'
+        uses: ./.github/actions/configure-aws-credentials
 
       - name: Get aws error from deploy job
         env:
@@ -113,11 +103,7 @@ jobs:
 
       - name: Configure AWS Credentials
         if: steps.verify-changed-config.outputs.any_changed == 'true'
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+        uses: ./.github/actions/configure-aws-credentials
 
       - name: Get account info
         if: steps.verify-changed-config.outputs.any_changed == 'true'
