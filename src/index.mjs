@@ -39,5 +39,4 @@ export const handler = async (event) => {
 		console.error("🚀 ~ file: index.mjs:39 ~ handler ~ error", error)
 		return done(500, error)
 	}
-
 };
